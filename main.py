@@ -15,19 +15,31 @@ class CoronaVirus:
         pass
 
 class HumanBeing:
-    def __init__(self)
+    def __init__(self):
         self.is_infected = False
-        pass
 
 class You(HumanBeing):
     def __init__(self):
         self.points = 0
-        pass
 
 class Bullet:
     ## Bullets will follow projectile motion
     def __init__(self):
-        pass
+        self.xSpeed = 10
+        self.ySpeed = 10
+        self.zSpeed = 0
+        self.x = 10
+        self.y = 10
+        self.z = 10
+
+    def update(self):
+        self.zSpeed += 0.2 # We take g=2, will adjust later
+        self.x += self.xSpeed
+        self.y += self.ySpeed
+        self.z += self.zSpeed
+        if self.z > 0:
+            pygame.draw.rect(pygame.display.get_surface(), (0, 255, 0), (self.x, self.z, 3, 3))
+        # Check collision
 
 class COVID_Combat:
     ## Rules:
@@ -60,11 +72,12 @@ class COVID_Combat:
             [1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0],
             [1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0],
         ]
-        pass
 
     def run(self):
+        pygame.time.Clock().tick(60)
         running = True
         display_update_count = 0
+        bullet = Bullet()
         while running:
             for event in pygame.event.get():
                 if (event.type == pygame.QUIT) or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
@@ -76,12 +89,12 @@ class COVID_Combat:
                 for j, color in enumerate(row):
                     if (color != 0):
                         pygame.draw.rect(pygame.display.get_surface(), COLOR_RED, ((i * 10, j * 10, 10, 10)))
+            bullet.update()
             ## TODO: Currently display is getting updated very rapidly, explore pygame to reduce frequency
             ## This will cause flikering later
             display_update_count += 1
             print("Display updating " + str(display_update_count))
             pygame.display.flip()
-        pass
 
 def main():
     pygame.init()
