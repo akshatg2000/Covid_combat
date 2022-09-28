@@ -36,18 +36,20 @@ class Human:
         self.infected = False
 
 class Player(Human):
-    def __init__(self):
+    def __init__(self, grid):
         self.points = 0
         self.x = 1
         self.y = 1
+        self.grid = grid
         self.image = pygame.transform.scale(pygame.image.load("images/player.png"), (GRID_SIDE, GRID_SIDE))
 
     def update(self):
         pygame.display.get_surface().blit(self.image, (GRID_SIDE * self.x, GRID_SIDE * self.y))
 
     def change_position(self, delta_position):
-        self.x += delta_position[0]
-        self.y += delta_position[1]
+        if self.grid[self.x + delta_position[0]][self.y + delta_position[1]] == 0:
+            self.x += delta_position[0]
+            self.y += delta_position[1]
 
 class Bullet:
     def __init__(self):
@@ -111,7 +113,7 @@ class Battlefield:
 class COVID_Combat:
     def __init__(self):
         self.battlefield = Battlefield()
-        self.player = Player()
+        self.player = Player(self.battlefield.grid)
 
     def run(self):
         pygame.time.Clock().tick(UPDATE_FREQUENCY)
@@ -121,7 +123,7 @@ class COVID_Combat:
                 if (event.type == pygame.QUIT) or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                     pygame.quit()
                     sys.exit()
-                elif event.type == pygame.KEYUP:
+                elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RIGHT:
                         self.player.change_position((1, 0))
                     elif event.key == pygame.K_LEFT:
