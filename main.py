@@ -5,6 +5,8 @@ COLOR_RED = (255, 0, 0)
 # TODO: Create graphics for CoronaVirus, Tree, Infected Human Beings, Healthy Human Beings, Bullet
 # TODO: Create sounds for firing, infecting, dying, recovering
 
+GRIDE_SIZE = 40
+
 class Tree:
     def __init__(self):
         ## Load image
@@ -88,7 +90,7 @@ class COVID_Combat:
             for i, row in enumerate(self.battle_field):
                 for j, color in enumerate(row):
                     if (color != 0):
-                        pygame.draw.rect(pygame.display.get_surface(), COLOR_RED, ((i * 10, j * 10, 10, 10)))
+                        pygame.draw.rect(pygame.display.get_surface(), COLOR_RED, ((i * GRIDE_SIZE, j * GRIDE_SIZE, GRIDE_SIZE, GRIDE_SIZE)))
             bullet.update()
             ## TODO: Currently display is getting updated very rapidly, explore pygame to reduce frequency
             ## This will cause flikering later
