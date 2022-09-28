@@ -21,15 +21,28 @@ RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 GRID_SIDE = 40
-UPDATE_FREQUENCY = 30
+UPDATE_FREQUENCY = 60
 
 class Tree:
     def __init__(self):
         pass
 
 class CoronaVirus:
-    def __init__(self):
-        pass
+    def __init__(self, grid, player):
+        self.x = 1
+        self.y = 1
+        self.grid = grid
+        self.player = player
+        self.image = pygame.transform.scale(pygame.image.load("images/coronavirus.png"), (GRID_SIDE, GRID_SIDE))
+
+    def update(self):
+        dx = random.choice([1, 1])
+        dy = random.choice([1, 1])
+        if self.grid[self.x + dx][self.y + dy] == 0:
+            self.x += dx
+            self.y += dy
+        pygame.display.get_surface().blit(self.image, (GRID_SIDE * self.x, GRID_SIDE * self.y))
+
 
 class Human:
     def __init__(self):
@@ -114,10 +127,16 @@ class COVID_Combat:
     def __init__(self):
         self.battlefield = Battlefield()
         self.player = Player(self.battlefield.grid)
+        self.coronaviruses = []
+        self.coronaviruses.append(CoronaVirus(self.battlefield.grid, self.player))
+        self.coronaviruses.append(CoronaVirus(self.battlefield.grid, self.player))
+        self.coronaviruses.append(CoronaVirus(self.battlefield.grid, self.player))
+        self.coronaviruses.append(CoronaVirus(self.battlefield.grid, self.player))
+        self.coronaviruses.append(CoronaVirus(self.battlefield.grid, self.player))
 
     def run(self):
-        pygame.time.Clock().tick(UPDATE_FREQUENCY)
         while True:
+            pygame.time.Clock().tick(UPDATE_FREQUENCY)
             pygame.display.get_surface().fill((0, 0, 0))
             for event in pygame.event.get():
                 if (event.type == pygame.QUIT) or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
@@ -132,8 +151,19 @@ class COVID_Combat:
                         self.player.change_position((0, -1))
                     elif event.key == pygame.K_DOWN:
                         self.player.change_position((0, 1))
+            # if pygame.key.get_pressed()[pygame.K_RIGHT]:
+                # self.player.change_position((1, 0))
+            # elif pygame.key.get_pressed()[pygame.K_LEFT]:
+                # self.player.change_position((-1, 0))
+            # elif pygame.key.get_pressed()[pygame.K_UP]:
+                # self.player.change_position((0, -1))
+            # elif pygame.key.get_pressed()[pygame.K_DOWN]:
+                # self.player.change_position((0, 1))
             self.battlefield.update()
             self.player.update()
+            for coronavirus in self.coronaviruses:
+                print("calling update on coronas")
+                coronavirus.update()
             pygame.display.flip()
 
 def main():
