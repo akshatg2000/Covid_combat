@@ -1,4 +1,9 @@
 import pygame, sys, os, math, random
+pygame.mixer.init()
+bang=pygame.mixer.Sound('bang.wav')
+music=pygame.mixer.music.load('background.mp3')
+pygame.mixer.music.play(-1)
+
 
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
@@ -150,6 +155,7 @@ class COVID_Combat:
             pygame.display.flip()
 
 def main():
+    pygame.mixer.pre_init(44100, -16, 1, 512)
     pygame.init()
     pygame.display.set_mode((1280, 720))
     pygame.display.set_caption("COVID Combat")
