@@ -1,20 +1,3 @@
-# Bullet range is 10 * length_of_grid_size
-# You can shoot a Coronavirus and gain 10 points
-# You can shoot trees without any effect
-# You can shoot infected human beings and lose 100 points
-# You can shoot healthy human beings and game is over
-# You can quickly wear a mask to save yourself by spending 100 points for 10 seconds
-# You can get infected(i.e. a Coronavirus touches you)
-# Infected human beings recover after 14 seconds if no further coronavirus touches him
-# If 3 coronaviruses are alive within you simultaneously, You die and game is over
-# Same rules of death is applicable for all human beings
-# Infected human beings spread coronavirus at a certain rate(say 3 viruses per second)
-# Viruses spread away from the source
-# If points drop below 0, game over
-
-# TODO: Create graphics for CoronaVirus, Tree, Infected Human Beings, Healthy Human Beings, Bullet
-# TODO: Create sounds for firing, infecting, dying, recovering
-
 import pygame, sys, os, math, random
 
 RED = (255, 0, 0)
