@@ -1,15 +1,27 @@
 import pygame, sys, os, math, random
+
 pygame.mixer.init()
-bang=pygame.mixer.Sound('bang.wav')
-music=pygame.mixer.music.load('background.mp3')
+gun_shot = pygame.mixer.Sound('sounds/gun_shot.wav')
+background_music = pygame.mixer.music.load('sounds/background.mp3')
 pygame.mixer.music.play(-1)
 
-
+WINDOW_SIZE = (1280, 720)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 GRID_SIDE = 40
 UPDATE_FREQUENCY = 60
+RAYCAST_COUNT = 600
+TOTAL_VIEWPOINT_ANGLE = math.pi / 3
+
+class RaycastEngine:
+    def __init__(self):
+        pass
+
+    def cast_rays(self):
+        angle_of_ray = player.curr_viewpoint_angle - (TOTAL_VIEWPOINT_ANGLE / 2) + 0.000000001
+        for i in range(RAYCAST_COUNT):
+            angle_of_ray += (TOTAL_VIEWPOINT_ANGLE / (RAYCAST_COUNT * 2))
 
 class Tree:
     def __init__(self):
@@ -41,6 +53,7 @@ class Player(Human):
         self.points = 0
         self.x = 1
         self.y = 1
+        self.curr_viewpoint_angle = 0
         self.grid = grid
         self.image = pygame.transform.scale(pygame.image.load("images/player.png"), (GRID_SIDE, GRID_SIDE))
 
@@ -51,6 +64,14 @@ class Player(Human):
         if self.grid[self.x + delta_position[0]][self.y + delta_position[1]] == 0:
             self.x += delta_position[0]
             self.y += delta_position[1]
+
+    def shoot(self):
+        gun_shot.play()
+
+    def rotate_viewpoint(self, pos_change):
+        dx, dy = pos_change
+        # update self.curr_viewpoint_angle
+        pass
 
 class Bullet:
     def __init__(self):
@@ -139,25 +160,20 @@ class COVID_Combat:
                         self.player.change_position((0, -1))
                     elif event.key == pygame.K_DOWN:
                         self.player.change_position((0, 1))
-            # if pygame.key.get_pressed()[pygame.K_RIGHT]:
-                # self.player.change_position((1, 0))
-            # elif pygame.key.get_pressed()[pygame.K_LEFT]:
-                # self.player.change_position((-1, 0))
-            # elif pygame.key.get_pressed()[pygame.K_UP]:
-                # self.player.change_position((0, -1))
-            # elif pygame.key.get_pressed()[pygame.K_DOWN]:
-                # self.player.change_position((0, 1))
+                    elif event.key == pygame.K_SPACE:
+                        self.player.shoot()
+                elif event.type == pygame.MOUSEMOTION:
+                    self.player.rotate_viewpoint(event.rel)
             self.battlefield.update()
             self.player.update()
             for coronavirus in self.coronaviruses:
-                print("calling update on coronas")
                 coronavirus.update()
             pygame.display.flip()
 
 def main():
     pygame.mixer.pre_init(44100, -16, 1, 512)
     pygame.init()
-    pygame.display.set_mode((1280, 720))
+    pygame.display.set_mode(WINDOW_SIZE)
     pygame.display.set_caption("COVID Combat")
     COVID_Combat().run()
 
