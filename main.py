@@ -1,10 +1,5 @@
 import pygame, sys, os, math, random
 
-pygame.mixer.init()
-gun_shot = pygame.mixer.Sound('sounds/gun_shot.wav')
-background_music = pygame.mixer.music.load('sounds/background.mp3')
-pygame.mixer.music.play(-1)
-
 WINDOW_SIZE = (1280, 720)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
@@ -18,10 +13,15 @@ class RaycastEngine:
     def __init__(self):
         pass
 
+    # Cast Rays and find the list of objects that needs to be rendered
+    # Sort them based on decreasing depth
+    # Draw them using blit()
     def cast_rays(self):
         angle_of_ray = player.curr_viewpoint_angle - (TOTAL_VIEWPOINT_ANGLE / 2) + 0.000000001
         for i in range(RAYCAST_COUNT):
             angle_of_ray += (TOTAL_VIEWPOINT_ANGLE / (RAYCAST_COUNT * 2))
+
+        # pygame.display.get_surface().blit(obj_image, (obj_x, obj_y))
 
 class Tree:
     def __init__(self):
@@ -56,6 +56,7 @@ class Player(Human):
         self.curr_viewpoint_angle = 0
         self.grid = grid
         self.image = pygame.transform.scale(pygame.image.load("images/player.png"), (GRID_SIDE, GRID_SIDE))
+        self.gun_shot = pygame.mixer.Sound('sounds/gun_shot.wav')
 
     def update(self):
         pygame.display.get_surface().blit(self.image, (GRID_SIDE * self.x, GRID_SIDE * self.y))
@@ -66,7 +67,7 @@ class Player(Human):
             self.y += delta_position[1]
 
     def shoot(self):
-        gun_shot.play()
+        self.gun_shot.play()
 
     def rotate_viewpoint(self, pos_change):
         dx, dy = pos_change
@@ -88,7 +89,7 @@ class Battlefield:
     def __init__(self):
         self.image1 = pygame.transform.scale(pygame.image.load("images/g1.png"), (GRID_SIDE, GRID_SIDE))
         self.image2 = pygame.transform.scale(pygame.image.load("images/g2.png"), (GRID_SIDE, GRID_SIDE))
-        self.grid = [
+        self.grid = [ #33x18
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
             [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
             [1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1],
@@ -134,6 +135,13 @@ class Battlefield:
 
 class COVID_Combat:
     def __init__(self):
+        pygame.init()
+        pygame.mixer.init()
+        pygame.mixer.music.load('sounds/background.mp3')
+        pygame.mixer.music.play(-1)
+        pygame.display.set_mode(WINDOW_SIZE)
+        pygame.display.set_caption("COVID Combat")
+
         self.battlefield = Battlefield()
         self.player = Player(self.battlefield.grid)
         self.coronaviruses = []
@@ -170,11 +178,4 @@ class COVID_Combat:
                 coronavirus.update()
             pygame.display.flip()
 
-def main():
-    pygame.mixer.pre_init(44100, -16, 1, 512)
-    pygame.init()
-    pygame.display.set_mode(WINDOW_SIZE)
-    pygame.display.set_caption("COVID Combat")
-    COVID_Combat().run()
-
-main()
+COVID_Combat().run()
