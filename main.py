@@ -1,62 +1,106 @@
 import pygame, sys, os, math, random
 
 WINDOW_SIZE = (1280, 720)
+WINDOW_WIDTH = 720
+WINDOW_HEIGHT = 1280
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 GRID_SIDE = 40
 UPDATE_FREQUENCY = 60
-RAYCAST_COUNT = 600
+RAYCAST_COUNT = 10
 TOTAL_VIEWPOINT_ANGLE = math.pi / 3
+PROJECTION_SCREEN_DEPTH = 1280 * 1.732 / 2
+WALL_HEIGHT = 1
+SCALING_FACTOR = WINDOW_WIDTH / RAYCAST_COUNT
+MAX_RAYCAST_HOPS = 128
 
-class RaycastEngine:
-    def __init__(self):
-        pass
-
-    # Cast Rays and find the list of objects that needs to be rendered
-    # Sort them based on decreasing depth
-    # Draw them using blit()
-    def cast_rays(self):
-        angle_of_ray = player.curr_viewpoint_angle - (TOTAL_VIEWPOINT_ANGLE / 2) + 0.000000001
-        for i in range(RAYCAST_COUNT):
-            angle_of_ray += (TOTAL_VIEWPOINT_ANGLE / (RAYCAST_COUNT * 2))
-
-        # pygame.display.get_surface().blit(obj_image, (obj_x, obj_y))
-
-class Tree:
-    def __init__(self):
-        pass
-
-class CoronaVirus:
-    def __init__(self, grid, player):
-        self.x = 1
-        self.y = 1
-        self.grid = grid
+class Camera:
+    def __init__(self, player, grid):
         self.player = player
-        self.image = pygame.transform.scale(pygame.image.load("images/coronavirus.png"), (GRID_SIDE, GRID_SIDE))
+        self.grid = grid
 
-    def update(self):
-        dx = random.choice([1, 1])
-        dy = random.choice([1, 1])
-        if self.grid[self.x + dx][self.y + dy] == 0:
-            self.x += dx
-            self.y += dy
-        pygame.display.get_surface().blit(self.image, (GRID_SIDE * self.x, GRID_SIDE * self.y))
+    def take_snapshot(self):
+        theta = self.player.curr_viewpoint_angle - (TOTAL_VIEWPOINT_ANGLE / 2)
+        d_theta = (TOTAL_VIEWPOINT_ANGLE / (RAYCAST_COUNT * 2))
+        src_x = self.player.x
+        src_y = self.player.y
+        for i in range(RAYCAST_COUNT):
+            sin_theta = math.sin(theta)
+            cos_theta = math.cos(theta)
+
+            #TODO: intersection with vertical lines, (x,y) is source of light
+            x = src_x
+            y = src_y
+            dx = -1
+            if cos_theta > 0:
+                dx = 1
+            dy = dx * sin_theta / cos_theta
+            d_depth = dy / sin_theta
+            wall_depth = 0
+            final_wall_depth = 0
+            for i in range(MAX_RAYCAST_HOPS):
+                to_break = False
+                try:
+                    if self.grid[int(x)][int(y)] != 0:
+                        to_break = True
+                except:
+                    to_break = True
+                if to_break:
+                    break
+                wall_depth += d_depth
+                x += dx
+                y += dy
+
+            dst_x = x
+            dst_y = y
+            final_wall_depth = wall_depth
 
 
-class Human:
-    def __init__(self):
-        self.infected = False
+            #TODO: intersection with horizontal lines
+            x = src_x
+            y = src_y
+            dy = -1
+            if sin_theta > 0:
+                dy = 1
+            dx = dy * cos_theta / sin_theta
+            d_depth = dx / cos_theta
+            wall_depth = 0
+            for i in range(MAX_RAYCAST_HOPS):
+                to_break = False
+                try:
+                    if self.grid[int(x)][int(y)] != 0:
+                        to_break = True
+                except:
+                    to_break = True
+                if to_break:
+                    break
+                wall_depth += d_depth
+                x += dx
+                y += dy
 
-class Player(Human):
-    def __init__(self, grid):
+            if wall_depth < final_wall_depth:
+                final_wall_depth = wall_depth
+                dst_x = x
+                dst_y = y
+
+            projected_wall_height = WALL_HEIGHT * PROJECTION_SCREEN_DEPTH / final_wall_depth
+            pygame.draw.rect(pygame.display.get_surface(), GREEN,
+                    (int(i * SCALING_FACTOR), int(WINDOW_HEIGHT/2 - projected_wall_height/2),
+                    int(SCALING_FACTOR), int(projected_wall_height)))
+            pygame.draw.line(pygame.display.get_surface(), RED, (src_x * GRID_SIDE, src_y * GRID_SIDE),(dst_x * GRID_SIDE, dst_y * GRID_SIDE))
+            theta += d_theta
+
+class Player():
+    def __init__(self, grid, clock_tick):
         self.points = 0
-        self.x = 1
-        self.y = 1
+        self.x = 10
+        self.y = 10
         self.curr_viewpoint_angle = 0
         self.grid = grid
         self.image = pygame.transform.scale(pygame.image.load("images/player.png"), (GRID_SIDE, GRID_SIDE))
         self.gun_shot = pygame.mixer.Sound('sounds/gun_shot.wav')
+        self.clock_tick = clock_tick
 
     def update(self):
         pygame.display.get_surface().blit(self.image, (GRID_SIDE * self.x, GRID_SIDE * self.y))
@@ -69,27 +113,19 @@ class Player(Human):
     def shoot(self):
         self.gun_shot.play()
 
-    def rotate_viewpoint(self, pos_change):
-        dx, dy = pos_change
-        # update self.curr_viewpoint_angle
-        pass
-
-class Bullet:
-    def __init__(self):
-        self.x = 0
-        self.y = 0
-        self.x_velocity = 2
-        self.y_velocity = 2
-
-    def update(self):
-        self.x += self.x_velocity
-        self.y += self.y_velocity
+    def rotate_viewpoint(self):
+        edge_distance = 80
+        if pygame.mouse.get_pos()[0] + edge_distance > WINDOW_WIDTH:
+            pygame.mouse.set_pos([WINDOW_WIDTH//2, WINDOW_HEIGHT//2])
+        if pygame.mouse.get_pos()[0] < edge_distance:
+            pygame.mouse.set_pos([WINDOW_WIDTH//2, WINDOW_HEIGHT//2])
+        self.curr_viewpoint_angle += min(max(pygame.mouse.get_rel()[0], -50), 50) * self.clock_tick * 0.0005
 
 class Battlefield:
     def __init__(self):
         self.image1 = pygame.transform.scale(pygame.image.load("images/g1.png"), (GRID_SIDE, GRID_SIDE))
         self.image2 = pygame.transform.scale(pygame.image.load("images/g2.png"), (GRID_SIDE, GRID_SIDE))
-        self.grid = [ #33x18
+        self.grid = [ #32x18
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
             [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
             [1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1],
@@ -124,7 +160,7 @@ class Battlefield:
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
         ]
 
-    def update(self):
+    def render(self):
         for i, row in enumerate(self.grid):
             for j, color in enumerate(row):
                 image = self.image1
@@ -141,26 +177,25 @@ class COVID_Combat:
         pygame.mixer.music.play(-1)
         pygame.display.set_mode(WINDOW_SIZE)
         pygame.display.set_caption("COVID Combat")
+        self.clock_tick = pygame.time.Clock().tick(UPDATE_FREQUENCY)
 
         self.battlefield = Battlefield()
-        self.player = Player(self.battlefield.grid)
-        self.coronaviruses = []
-        self.coronaviruses.append(CoronaVirus(self.battlefield.grid, self.player))
-        self.coronaviruses.append(CoronaVirus(self.battlefield.grid, self.player))
-        self.coronaviruses.append(CoronaVirus(self.battlefield.grid, self.player))
-        self.coronaviruses.append(CoronaVirus(self.battlefield.grid, self.player))
-        self.coronaviruses.append(CoronaVirus(self.battlefield.grid, self.player))
+        self.player = Player(self.battlefield.grid, self.clock_tick)
+        self.camera = Camera(self.player, self.battlefield.grid)
 
     def run(self):
         while True:
-            pygame.time.Clock().tick(UPDATE_FREQUENCY)
+            self.clock_tick = pygame.time.Clock().tick(UPDATE_FREQUENCY)
             pygame.display.get_surface().fill((0, 0, 0))
             for event in pygame.event.get():
-                if (event.type == pygame.QUIT) or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
                 elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_RIGHT:
+                    if event.key == pygame.K_ESCAPE:
+                        pygame.quit()
+                        sys.exit()
+                    elif event.key == pygame.K_RIGHT:
                         self.player.change_position((1, 0))
                     elif event.key == pygame.K_LEFT:
                         self.player.change_position((-1, 0))
@@ -171,11 +206,10 @@ class COVID_Combat:
                     elif event.key == pygame.K_SPACE:
                         self.player.shoot()
                 elif event.type == pygame.MOUSEMOTION:
-                    self.player.rotate_viewpoint(event.rel)
-            self.battlefield.update()
+                    self.player.rotate_viewpoint()
+            self.battlefield.render()
+            self.camera.take_snapshot()
             self.player.update()
-            for coronavirus in self.coronaviruses:
-                coronavirus.update()
             pygame.display.flip()
 
 COVID_Combat().run()
