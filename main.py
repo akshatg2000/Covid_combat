@@ -9,8 +9,8 @@ enemies = []
 INITIAL_ENEMY_COUNT = 25
 
 RIGHT = 0
-LEFT = 1
-UP = 2
+LEFT = 2
+UP = 1
 DOWN = 3
 
 WINDOW_SIZE = (1280, 720)
@@ -135,7 +135,9 @@ class Camera: #For 3D projection using raycasting
             pygame.draw.rect(pygame.display.get_surface(), GREEN,
                     (int(i * SCALING_FACTOR), int((WINDOW_HEIGHT - projected_wall_height)/2),
                     int(SCALING_FACTOR), int(projected_wall_height)))
-            pygame.draw.line(pygame.display.get_surface(), RED, (src_x * GRID_SIDE, src_y * GRID_SIDE),(dst_x * GRID_SIDE, dst_y * GRID_SIDE))
+            pygame.draw.line(pygame.display.get_surface(), RED,
+                    (src_x * GRID_SIDE, src_y * GRID_SIDE),
+                    (dst_x * GRID_SIDE, dst_y * GRID_SIDE))
             theta += d_theta
 
 class Enemy:
@@ -146,7 +148,9 @@ class Enemy:
         self.y = y
         self.grid = grid
         self.direction = direction
-        self.image = pygame.transform.scale(pygame.image.load("images/enemy.png"), (GRID_SIDE, GRID_SIDE))
+        self.image = pygame.transform.scale(pygame.image.load("images/enemy.png"),
+                (GRID_SIDE, GRID_SIDE))
+
     def update(self):
         if self.counter == 0:
             speed = 1
@@ -161,13 +165,15 @@ class Enemy:
                 x -= speed
             elif self.direction == 3:
                 y += speed
-            if x < len(self.grid) and x > -1 and y > -1 and y < len(self.grid[0]) and self.grid[x][y] == 0:
+            if x < len(self.grid) and x > -1 and y > -1 and
+                    y < len(self.grid[0]) and self.grid[x][y] == 0:
                 self.x = x
                 self.y = y
             self.counter = 30
         else:
             self.counter -= 1
-        pygame.display.get_surface().blit(self.image, (GRID_SIDE * self.x, GRID_SIDE * self.y))
+        pygame.display.get_surface().blit(self.image,
+                (GRID_SIDE * self.x, GRID_SIDE * self.y))
 
 class Player():
     def __init__(self, grid):
@@ -176,7 +182,8 @@ class Player():
         self.direction = RIGHT
         self.curr_viewpoint_angle = 0
         self.grid = grid
-        self.image = pygame.transform.scale(pygame.image.load("images/player.png"), (GRID_SIDE, GRID_SIDE))
+        self.image = pygame.transform.scale(pygame.image.load("images/player.png"),
+                (GRID_SIDE, GRID_SIDE))
         self.gun_shot = pygame.mixer.Sound('sounds/gun_shot.wav')
         self.active_bullets = []
 
@@ -196,7 +203,8 @@ class Player():
                         bullet_hit = True
                         break
                 if not bullet_hit:
-                    pygame.draw.circle(pygame.display.get_surface(), (0, 200, 200), (b[0], b[1]), 5)
+                    pygame.draw.circle(pygame.display.get_surface(),
+                            (0, 200, 200), (b[0], b[1]), 5)
                     bullets.append((b[0] + b[2], b[1] + b[3], b[2], b[3]))
         self.active_bullets = bullets
 
@@ -209,6 +217,9 @@ class Player():
             # self.x = x
             # self.y = y
 
+        if ((self.direction + 2) % 4) == delta_position[2]:
+            self.direction = delta_position[2]
+            return
         x = self.x + delta_position[0]
         y = self.y + delta_position[1]
 
@@ -230,7 +241,8 @@ class Player():
             dy = -speed
         elif self.direction == DOWN:
             dy = speed
-        self.active_bullets.append((self.x * GRID_SIDE + GRID_SIDE/2, self.y * GRID_SIDE + GRID_SIDE/2, dx, dy))
+        self.active_bullets.append((self.x * GRID_SIDE + GRID_SIDE/2,
+                self.y * GRID_SIDE + GRID_SIDE/2, dx, dy))
 
     def rotate_viewpoint(self):
         self.curr_viewpoint_angle += min(max(pygame.mouse.get_rel()[0], -50), 50) * FRAME_DELAY
@@ -242,8 +254,10 @@ class Player():
 
 class Battlefield:
     def __init__(self):
-        self.image1 = pygame.transform.scale(pygame.image.load("images/g1.png"), (GRID_SIDE, GRID_SIDE))
-        self.image2 = pygame.transform.scale(pygame.image.load("images/g2.png"), (GRID_SIDE, GRID_SIDE))
+        self.image1 = pygame.transform.scale(pygame.image.load("images/g1.png"),
+                (GRID_SIDE, GRID_SIDE))
+        self.image2 = pygame.transform.scale(pygame.image.load("images/g2.png"),
+                (GRID_SIDE, GRID_SIDE))
         self.grid = [ #32x18
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
             [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
@@ -308,8 +322,10 @@ class COVID_Combat:
         self.player = Player(self.battlefield.grid)
         self.camera = Camera(self.player, self.battlefield.grid)
 
-        self.win_image = pygame.transform.scale(pygame.image.load("images/win.png"), (WINDOW_HEIGHT / 2, WINDOW_WIDTH / 2))
-        self.game_over_image = pygame.transform.scale(pygame.image.load("images/game_over.png"), (WINDOW_HEIGHT / 2, WINDOW_WIDTH / 2))
+        self.win_image = pygame.transform.scale(pygame.image.load("images/win.png"),
+                    (WINDOW_HEIGHT / 2, WINDOW_WIDTH / 2))
+        self.game_over_image = pygame.transform.scale(pygame.image.load("images/game_over.png"),
+                    (WINDOW_HEIGHT / 2, WINDOW_WIDTH / 2))
 
     def run(self):
         global enemies
@@ -330,10 +346,12 @@ class COVID_Combat:
                 self.game_own = True
 
             if self.game_own:
-                pygame.display.get_surface().blit(self.win_image, (WINDOW_HEIGHT / 4, WINDOW_WIDTH / 4))
+                pygame.display.get_surface().blit(self.win_image,
+                        (WINDOW_HEIGHT / 4, WINDOW_WIDTH / 4))
 
             if self.game_over:
-                pygame.display.get_surface().blit(self.game_over_image, (WINDOW_HEIGHT / 4, WINDOW_WIDTH / 4))
+                pygame.display.get_surface().blit(self.game_over_image,
+                        (WINDOW_HEIGHT / 4, WINDOW_WIDTH / 4))
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -381,7 +399,8 @@ class COVID_Combat:
                         self.game_over = True
 
             enemies = alive_enemies
-            # debug(str(self.player.x) + " " + str(self.player.y) + " " + str(self.player.curr_viewpoint_angle))
+            # debug(str(self.player.x) + " " + str(self.player.y) +
+            #    " " + str(self.player.curr_viewpoint_angle))
 
             pygame.display.flip()
 
