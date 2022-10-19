@@ -165,8 +165,7 @@ class Enemy:
                 x -= speed
             elif self.direction == 3:
                 y += speed
-            if x < len(self.grid) and x > -1 and y > -1 and
-                    y < len(self.grid[0]) and self.grid[x][y] == 0:
+            if x < len(self.grid) and x > -1 and y > -1 and y < len(self.grid[0]) and self.grid[x][y] == 0:
                 self.x = x
                 self.y = y
             self.counter = 30
