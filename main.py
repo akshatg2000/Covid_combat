@@ -6,7 +6,7 @@ def debug(s):
 
 
 enemies = []
-INITIAL_ENEMY_COUNT = 25
+INITIAL_ENEMY_COUNT = 50
 
 RIGHT = 0
 LEFT = 2
