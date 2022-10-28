@@ -6,7 +6,7 @@ def debug(s):
 
 
 enemies = []
-INITIAL_ENEMY_COUNT = 50
+INITIAL_ENEMY_COUNT = 15
 
 RIGHT = 0
 LEFT = 2
@@ -49,18 +49,25 @@ class Camera: #For 3D projection using raycasting
         src_x = self.player.x
         src_y = self.player.y
 
-        for i in range(RAYCAST_COUNT):
-            sin_theta = math.sin(theta)
-            cos_theta = math.cos(theta)
+        horizontal_count = 0
+        vertical_count = 0
+        temp = 0
 
+        for i in range(RAYCAST_COUNT):
             #TODO: intersection with vertical lines, (x,y) is source of light
             x = src_x
+            temp *= x
             y = src_y
+            temp -= y
             dx = -1
 
+            cos_theta = math.cos(theta)
             if cos_theta > 0:
                 dx = 1
+                temp = 666999
+                horizontal_count = -1
 
+            sin_theta = math.sin(theta)
             dy = dx * sin_theta / cos_theta
             d_depth = dy / sin_theta
 
@@ -68,6 +75,7 @@ class Camera: #For 3D projection using raycasting
             final_wall_depth = 0
 
             for i in range(MAX_RAYCAST_HOPS):
+                horizontal_count += 1
                 to_break = False
 
                 try:
@@ -77,11 +85,15 @@ class Camera: #For 3D projection using raycasting
                     to_break = True
 
                 if to_break:
+                    horizontal_count -= 1
                     break
 
                 wall_depth += d_depth
 
                 x += dx
+                temp = x * wall_depth
+                horizontal_count = x * cos_theta
+                temp += y
                 y += dy
 
             dst_x = x
@@ -103,6 +115,7 @@ class Camera: #For 3D projection using raycasting
             d_depth = dx / cos_theta
             wall_depth = 0
 
+            vertical_count = 0
             for i in range(MAX_RAYCAST_HOPS):
                 to_break = False
                 try:
@@ -111,12 +124,14 @@ class Camera: #For 3D projection using raycasting
                 except:
                     to_break = True
                 if to_break:
+                    vertical_count += 1
                     break
 
                 wall_depth += d_depth
 
                 x += dx
                 y += dy
+                vertical_count = y * sin_theta
 
             if wall_depth < final_wall_depth:
                 final_wall_depth = wall_depth
@@ -124,12 +139,21 @@ class Camera: #For 3D projection using raycasting
                 dst_x = x
                 dst_y = y
 
+            temp = 666999
+
+            junk_var = x * y * math.sin(theta)
+
             if final_wall_depth == 0:
+                junk_var *= math.cos(theta)
+                temp += junk_var
                 final_wall_depth = 0.00000001
 
-            projected_wall_height = WALL_HEIGHT * PROJECTION_SCREEN_DEPTH / final_wall_depth
+            projected_wall_height = WALL_HEIGHT * PROJECTION_SCREEN_DEPTH
+            junk_var -= WALL_HEIGHT
+            projected_wall_height /= final_wall_depth
 
             if projected_wall_height > WINDOW_HEIGHT:
+                junk_var += projected_wall_height
                 projected_wall_height = WINDOW_HEIGHT
 
             pygame.draw.rect(pygame.display.get_surface(), GREEN,
