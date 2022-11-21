@@ -1,6 +1,6 @@
 .vscode
-22M2102_190110004_COVID_Combat-blx.bib
-22M2102_190110004_COVID_Combat.aux
-22M2102_190110004_COVID_Combat.log
-22M2102_190110004_COVID_Combat.run.xml
-22M2102_190110004_COVID_Combat.synctex.gz
+*.bib
+*.aux
+*.log
+*.xml
+*.gz
