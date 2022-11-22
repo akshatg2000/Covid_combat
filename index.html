@@ -1,26 +1,179 @@
 <!DOCTYPE html>
 
+<style> 
+    body {
+      margin: 0;
+      font-family:Arial, Helvetica, sans-serif;
+      background-image: url("https://i.ibb.co/KWPRdH9/ss.jpg");
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+    
+    .topnav {
+      overflow: hidden;
+      background-color: #333;
+    }
+    
+    .topnav a {
+      float: left;
+      color: #f2f2f2;
+      text-align: center;
+      padding: 14px 16px;
+      text-decoration: none;
+      font-size: 17px;
+    }
+    
+    .topnav a:hover {
+      background-color: #ddd;
+      color: black;
+    }
+    
+    .topnav a.active {
+      background-color: #04AA6D;
+      color: white;
+    }
+
+    .main-body {
+        
+        text-align: left;
+        margin-left: auto;
+        margin-right: auto;
+        width: 70%;
+        list-style-type: none;
+        padding: 0;
+      }
+    #myimage {
+        float: right;
+        border: 1px dotted black;
+        margin: 0px 0px 0px 0px;
+       
+        height: 150px;
+    }
+    .video {
+      padding-top: 40px;
+      text-align: center;
+    }
+
+    #myvideo {
+      padding-top: 30px;
+      
+    }
+
+    #main-footer {
+      background: #333;
+      color: #fff;
+      height: 5rem;
+      padding: 20px;
+      margin-top: 30px;
+    }
+    
+    #main-footer a {
+      color: #fff;
+    }
+    
+    #main-footer .footer-content {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-pack: justify;
+          -ms-flex-pack: justify;
+              justify-content: space-between;
+      height: 5rem;
+      -webkit-box-align: center;
+          -ms-flex-align: center;
+              align-items: center;
+    }
+    
+    #main-footer .footer-content .social .fab {
+      margin-right: 1rem;
+      border: 2px #fff solid;
+      border-radius: 50%;
+      height: 20px;
+      width: 20px;
+      line-height: 20px;
+      text-align: center;
+      padding: 0.5rem;
+    }
+    
+    #main-footer .footer-content .social .fab:hover {
+      background: #ffbc00;
+      color: #333;
+    }
+    
+    
+   
+</style>
+
 <html>
-<head>
-    <title>COVID Combat</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
-</head>
+    <head>
+        <title>COVID_combat</title>
+        <script
+      src="https://kit.fontawesome.com/9576b74b08.js"
+      crossorigin="anonymous"
+    ></script>
+    <link
+      href="https://fonts.googleapis.com/css?family=Dosis"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/main.css" />
+<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
 
-<body style="background-color:#be68f7;">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
+    </head>
+    <body>
+        
+        <div class="topnav">
+            <a class="active" href="index.html" target="_blank">COVID_combat</a>
+            <a href="report.html" target="_blank">report</a>
+            
+        </div>
+    <body>
+            
+       
+      
+    
+        <div class="main-body">
+            <div class="Title">
+                <h1 style="font-family: Arial, Helvetica, sans-serif;" >COVID_combat</h1>
+                <h3 style="font-family: Arial, Helvetica, sans-serif;">About game
+                </h3>
+            </div>
+            <div class="INTRO">
+                <p id="desc" style= "font-size: 14px; font-family: Arial, Helvetica, sans-serif;" >
+                    <img src="game_snap.png" id="myimage" title="screenshot" >
+                    The name of the Game is “COVID Combat”. It is a 2D game. There is a battlefield
+                    consisting of empty places and obstacles through which the active objects (Player and
+                    Enemies) of the game can walk and interact. The Player of the Game has an unlimited
+                    supply of bullets using which he can kill the enemies. On the other hand, enemies walk
+                    randomly and if the Player comes in contact with some enemy, the game is over. If all
+                    the enemies are killed, Player wins the game
+                    <br>
+                    <br>
+                    To run this game, you need python3 and pygame. Installation instructions for python3
+                    can be found in www.python.org and for pygame in www.pygame.org. Once installed,
+                    the game can be run by invoking pythonmain.py from the root directory.
+                                                          
+                </p>
+            </div>
+            <div class="video">
+              <h1 style="font-family: Arial, Helvetica, sans-serif">Demonstration Video </h1>
 
-    <div class="row" style="padding:30px 30px; text-align:center;">
-        <h3 class="h3">Game Description</h3>
-        <p id="desc" style="font-size:11pt;  text-align: justify;">
-            To be written by Akshat...
-        </p>
-    </div>
+              <video controls style="width:50%; margin: auto;">
+                <source src="demo.mp4" type="video/mp4">
+              </video>
+            </div>  
 
-    <div class="row" style="padding:30px 30px; text-align:center;">
-        <h2>Sample Video</h2>
-        <video controls style="width:50%; margin: auto;">
-            <source src="demo.mp4" type="video/mp4">
-        </video>
-    </div>
-</body>
+
+            
+
+        </div>
+
+        
+        
+
+
+
+
+
+    </body>
+
 </html>
