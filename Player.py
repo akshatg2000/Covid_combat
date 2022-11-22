@@ -37,7 +37,6 @@ class Player():
                     bullets.append((b[0] + b[2], b[1] + b[3], b[2], b[3]))
         self.active_bullets = bullets
 
-
     def change_position(self, delta_position):
         # x = int(self.x + delta_position[0] * math.cos(self.curr_viewpoint_angle) * FRAME_DELAY * 5)
         # y = int(self.y + delta_position[1] * math.sin(self.curr_viewpoint_angle) * FRAME_DELAY * 5)
