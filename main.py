@@ -11,4 +11,3 @@ def debug(s):
     print(s)
 
 COVID_Combat().run()
-

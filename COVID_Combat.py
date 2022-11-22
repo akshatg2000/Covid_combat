@@ -1,3 +1,6 @@
+'''
+This is the entry class and represents a game object.
+'''
 import pygame, sys, os, math, random
 from globals import *
 from Battlefield import *
@@ -29,23 +32,25 @@ class COVID_Combat:
                     (WINDOW_HEIGHT / 2, WINDOW_WIDTH / 2))
         self.game_over_image = pygame.transform.scale(pygame.image.load("images/game_over.png"),
                     (WINDOW_HEIGHT / 2, WINDOW_WIDTH / 2))
+        
+        self.enemies = []
 
     def run(self):
-        global enemies
-        while len(enemies) != INITIAL_ENEMY_COUNT:
+        while len(self.enemies) != INITIAL_ENEMY_COUNT:
             x = random.randint(0, len(self.battlefield.grid) - 1)
             y = random.randint(0, len(self.battlefield.grid[0]) - 1)
+
             direction = random.randint(0, 3)
 
             if self.battlefield.grid[x][y] == 0:
-                enemies.append(Enemy(x, y, direction, self.battlefield.grid))
+                self.enemies.append(Enemy(x, y, direction, self.battlefield.grid))
 
         while True:
             pygame.time.Clock().tick(UPDATE_FREQUENCY)
 
             pygame.display.get_surface().fill((0, 0, 0))
 
-            if len(enemies) == 0:
+            if len(self.enemies) == 0:
                 self.game_own = True
 
             if self.game_own:
@@ -88,12 +93,12 @@ class COVID_Combat:
                 pygame.display.flip()
                 continue
 
-            self.player.update()
+            self.player.update(self.enemies)
             self.battlefield.render_2d_grid()
             #self.camera.take_snapshot()
 
             alive_enemies = []
-            for enemy in enemies:
+            for enemy in self.enemies:
                 if enemy.alive:
                     enemy.update()
                     alive_enemies.append(enemy)
@@ -101,7 +106,7 @@ class COVID_Combat:
                     if self.player.x == enemy.x and self.player.y == enemy.y:
                         self.game_over = True
 
-            enemies = alive_enemies
+            self.enemies = alive_enemies
             # debug(str(self.player.x) + " " + str(self.player.y) +
             #    " " + str(self.player.curr_viewpoint_angle))
 

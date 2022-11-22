@@ -17,7 +17,7 @@ class Player():
         self.gun_shot = pygame.mixer.Sound('sounds/gun_shot.wav')
         self.active_bullets = []
 
-    def update(self):
+    def update(self, enemies):
         pygame.display.get_surface().blit(self.image, (GRID_SIDE * self.x, GRID_SIDE * self.y))
         # pygame.draw.circle(pygame.display.get_surface(), (0, 200, 200), (self.x, self.y), 10)
         bullets = []
@@ -26,7 +26,6 @@ class Player():
             j = int(b[1] / GRID_SIDE)
             if (self.grid[i][j] == 0):
                 bullet_hit = False
-                global enemies
                 for enemy in enemies:
                     if enemy.x == i and enemy.y == j:
                         enemy.alive = False

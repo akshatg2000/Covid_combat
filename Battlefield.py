@@ -1,3 +1,8 @@
+'''
+This class represents the 2D grid on which
+the game is played.
+'''
+
 import pygame, sys, os, math, random
 from globals import *
 from COVID_Combat import *

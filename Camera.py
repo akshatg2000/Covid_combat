@@ -1,3 +1,17 @@
+''' The idea is to assume that there is a camera at the
+    player's position and we cast rays to the objects
+    in front of the player within a certain viewport or
+    field of vision.
+
+    There is a screen at a distance and casted rays
+    create projection in that screen.
+
+    This is a standard raycasting algorithm used to
+    create 3D games from 2D grids
+
+    https://en.wikipedia.org/wiki/Ray_casting
+'''
+
 import pygame, sys, os, math, random
 from globals import *
 from COVID_Combat import *
@@ -5,20 +19,7 @@ from Battlefield import *
 from Player import *
 from Enemy import *
 
-# https://en.wikipedia.org/wiki/Ray_casting
 class Camera:
-    #For 3D projection using raycasting
-    ''' The idea is to assume that there is a camera at the
-        player's position and we cast rays to the objects
-        in front of the player within a certain viewport or 
-        field of vision.
-        
-        There is a screen at a distance and casted rays 
-        create projection in that screen.
-        
-        This is a standard raycasting algorithm used to 
-        create 3D games from 2D grids
-    '''
 
     def __init__(self, player, grid):
         self.player = player

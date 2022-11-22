@@ -1,6 +1,8 @@
+''' This file contains constants for 
+controlling various behaviours of the game'''
+
 import pygame, sys, os, math, random
 
-enemies = []
 INITIAL_ENEMY_COUNT = 15
 
 RIGHT = 0

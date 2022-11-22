@@ -1,3 +1,7 @@
+'''
+Enemy class
+'''
+
 import pygame, sys, os, math, random
 from globals import *
 from COVID_Combat import *
